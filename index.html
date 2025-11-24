@@ -1,0 +1,667 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Warung Rim - Saweria Payment API</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            line-height: 1.6;
+            color: #333;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+
+        /* Header Styles */
+        header {
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(10px);
+            padding: 1rem 0;
+            box-shadow: 0 2px 20px rgba(0, 0, 0, 0.1);
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+
+        .navbar {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .logo {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            font-size: 1.5rem;
+            font-weight: bold;
+            color: #667eea;
+        }
+
+        .logo i {
+            font-size: 2rem;
+        }
+
+        .nav-links {
+            display: flex;
+            gap: 2rem;
+        }
+
+        .nav-links a {
+            text-decoration: none;
+            color: #333;
+            font-weight: 500;
+            transition: color 0.3s;
+        }
+
+        .nav-links a:hover {
+            color: #667eea;
+        }
+
+        /* Hero Section */
+        .hero {
+            text-align: center;
+            padding: 4rem 0;
+            color: white;
+        }
+
+        .hero h1 {
+            font-size: 3.5rem;
+            margin-bottom: 1rem;
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3);
+        }
+
+        .hero p {
+            font-size: 1.2rem;
+            max-width: 600px;
+            margin: 0 auto 2rem;
+            opacity: 0.9;
+        }
+
+        .saweria-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 10px;
+            background: rgba(255, 255, 255, 0.2);
+            padding: 10px 20px;
+            border-radius: 50px;
+            margin-bottom: 2rem;
+        }
+
+        .cta-button {
+            display: inline-block;
+            background: #ff6b6b;
+            color: white;
+            padding: 12px 30px;
+            border-radius: 50px;
+            text-decoration: none;
+            font-weight: bold;
+            transition: transform 0.3s, box-shadow 0.3s;
+            box-shadow: 0 4px 15px rgba(255, 107, 107, 0.4);
+        }
+
+        .cta-button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(255, 107, 107, 0.6);
+        }
+
+        /* API Documentation */
+        .api-section {
+            background: white;
+            border-radius: 15px;
+            padding: 3rem;
+            margin: 2rem 0;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+        }
+
+        .section-title {
+            color: #333;
+            margin-bottom: 2rem;
+            font-size: 2rem;
+            border-left: 5px solid #667eea;
+            padding-left: 1rem;
+        }
+
+        .endpoint-card {
+            background: #f8f9fa;
+            border-radius: 10px;
+            padding: 1.5rem;
+            margin-bottom: 1.5rem;
+            border-left: 4px solid #667eea;
+        }
+
+        .endpoint-header {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            margin-bottom: 1rem;
+        }
+
+        .method {
+            padding: 5px 15px;
+            border-radius: 20px;
+            font-weight: bold;
+            font-size: 0.9rem;
+        }
+
+        .method.post { background: #10b981; color: white; }
+        .method.get { background: #3b82f6; color: white; }
+
+        .endpoint-url {
+            font-family: 'Courier New', monospace;
+            background: #e9ecef;
+            padding: 8px 12px;
+            border-radius: 5px;
+            font-size: 0.9rem;
+        }
+
+        .code-block {
+            background: #2d3748;
+            color: #e2e8f0;
+            padding: 1.5rem;
+            border-radius: 8px;
+            margin: 1rem 0;
+            overflow-x: auto;
+            font-family: 'Courier New', monospace;
+            font-size: 0.9rem;
+        }
+
+        .param-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 1rem 0;
+        }
+
+        .param-table th,
+        .param-table td {
+            padding: 12px;
+            text-align: left;
+            border-bottom: 1px solid #e2e8f0;
+        }
+
+        .param-table th {
+            background: #f7fafc;
+            font-weight: 600;
+        }
+
+        .required {
+            color: #e53e3e;
+            font-weight: bold;
+        }
+
+        /* Features Section */
+        .features {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 2rem;
+            margin: 3rem 0;
+        }
+
+        .feature-card {
+            background: white;
+            padding: 2rem;
+            border-radius: 10px;
+            text-align: center;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+            transition: transform 0.3s;
+        }
+
+        .feature-card:hover {
+            transform: translateY(-5px);
+        }
+
+        .feature-icon {
+            font-size: 3rem;
+            color: #667eea;
+            margin-bottom: 1rem;
+        }
+
+        /* Setup Guide */
+        .setup-guide {
+            background: #fff3cd;
+            border: 1px solid #ffeaa7;
+            border-radius: 10px;
+            padding: 2rem;
+            margin: 2rem 0;
+        }
+
+        .guide-step {
+            display: flex;
+            align-items: flex-start;
+            gap: 1rem;
+            margin-bottom: 1.5rem;
+        }
+
+        .step-number {
+            background: #667eea;
+            color: white;
+            width: 30px;
+            height: 30px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+            flex-shrink: 0;
+        }
+
+        /* Footer */
+        footer {
+            background: rgba(0, 0, 0, 0.8);
+            color: white;
+            text-align: center;
+            padding: 2rem 0;
+            margin-top: 4rem;
+        }
+
+        /* Responsive Design */
+        @media (max-width: 768px) {
+            .navbar {
+                flex-direction: column;
+                gap: 1rem;
+            }
+
+            .nav-links {
+                gap: 1rem;
+            }
+
+            .hero h1 {
+                font-size: 2.5rem;
+            }
+
+            .api-section {
+                padding: 1.5rem;
+            }
+
+            .endpoint-header {
+                flex-direction: column;
+                align-items: flex-start;
+            }
+        }
+
+        /* Copy Button */
+        .copy-btn {
+            background: #667eea;
+            color: white;
+            border: none;
+            padding: 5px 10px;
+            border-radius: 5px;
+            cursor: pointer;
+            margin-left: 10px;
+            transition: background 0.3s;
+        }
+
+        .copy-btn:hover {
+            background: #5a6fd8;
+        }
+
+        /* Test Section */
+        .test-section {
+            background: #f8f9fa;
+            border-radius: 10px;
+            padding: 2rem;
+            margin: 2rem 0;
+        }
+
+        .test-form {
+            display: grid;
+            gap: 1rem;
+            margin-top: 1rem;
+        }
+
+        .form-group {
+            display: flex;
+            flex-direction: column;
+        }
+
+        .form-group label {
+            font-weight: 600;
+            margin-bottom: 5px;
+        }
+
+        .form-group input {
+            padding: 10px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            font-family: 'Courier New', monospace;
+        }
+
+        .test-button {
+            background: #667eea;
+            color: white;
+            border: none;
+            padding: 12px 20px;
+            border-radius: 5px;
+            cursor: pointer;
+            font-weight: bold;
+            transition: background 0.3s;
+        }
+
+        .test-button:hover {
+            background: #5a6fd8;
+        }
+
+        .test-result {
+            margin-top: 1rem;
+            padding: 1rem;
+            background: #2d3748;
+            color: white;
+            border-radius: 5px;
+            font-family: 'Courier New', monospace;
+            display: none;
+        }
+    </style>
+</head>
+<body>
+    <!-- Header -->
+    <header>
+        <div class="container">
+            <nav class="navbar">
+                <div class="logo">
+                    <i class="fas fa-store"></i>
+                    <span>Warung Rim API</span>
+                </div>
+                <div class="nav-links">
+                    <a href="#documentation">Documentation</a>
+                    <a href="#setup">Setup Guide</a>
+                    <a href="#support">Support</a>
+                </div>
+            </nav>
+        </div>
+    </header>
+
+    <!-- Hero Section -->
+    <section class="hero">
+        <div class="container">
+            <h1>Warung Rim Saweria API</h1>
+            <p>Integrasi payment Saweria yang mudah untuk bot Telegram Anda. Generate QRIS otomatis dengan satu API call.</p>
+            <div class="saweria-badge">
+                <i class="fas fa-hand-holding-usd"></i>
+                <span>Powered by Saweria</span>
+            </div>
+            <br>
+            <a href="#documentation" class="cta-button">
+                <i class="fas fa-book"></i> Lihat Dokumentasi
+            </a>
+        </div>
+    </section>
+
+    <!-- Features Section -->
+    <section class="container">
+        <div class="features">
+            <div class="feature-card">
+                <div class="feature-icon">
+                    <i class="fas fa-qrcode"></i>
+                </div>
+                <h3>QRIS Auto Generate</h3>
+                <p>Generate QR code Saweria otomatis untuk pembayaran mudah</p>
+            </div>
+            <div class="feature-card">
+                <div class="feature-icon">
+                    <i class="fas fa-bolt"></i>
+                </div>
+                <h3>Fast Response</h3>
+                <p>Response time &lt; 2 detik untuk setiap request payment</p>
+            </div>
+            <div class="feature-card">
+                <div class="feature-icon">
+                    <i class="fas fa-shield-alt"></i>
+                </div>
+                <h3>Secure API</h3>
+                <p>API Key protection dan data encryption untuk keamanan</p>
+            </div>
+        </div>
+    </section>
+
+    <!-- Setup Guide -->
+    <section class="container" id="setup">
+        <div class="api-section">
+            <h2 class="section-title">Setup Guide</h2>
+            <div class="setup-guide">
+                <div class="guide-step">
+                    <div class="step-number">1</div>
+                    <div>
+                        <h4>Daftar Saweria</h4>
+                        <p>Buat akun di <a href="https://saweria.co" target="_blank">saweria.co</a> dan verifikasi akun Anda</p>
+                    </div>
+                </div>
+                <div class="guide-step">
+                    <div class="step-number">2</div>
+                    <div>
+                        <h4>Dapatkan User ID</h4>
+                        <p>Ambil User ID Saweria dari profile Anda (bukan username)</p>
+                    </div>
+                </div>
+                <div class="guide-step">
+                    <div class="step-number">3</div>
+                    <div>
+                        <h4>Integrasi API</h4>
+                        <p>Gunakan endpoint di bawah dengan User ID Saweria Anda</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- API Documentation -->
+    <section class="container" id="documentation">
+        <div class="api-section">
+            <h2 class="section-title">API Documentation</h2>
+            
+            <!-- Create Payment Endpoint -->
+            <div class="endpoint-card">
+                <div class="endpoint-header">
+                    <span class="method post">POST</span>
+                    <span class="endpoint-url">/api/saweria/createPayment</span>
+                </div>
+                <p>Create new Saweria payment and generate QR code</p>
+                
+                <h4>Request Headers:</h4>
+                <div class="code-block">
+Content-Type: application/json
+                </div>
+
+                <h4>Request Body:</h4>
+                <table class="param-table">
+                    <thead>
+                        <tr>
+                            <th>Parameter</th>
+                            <th>Type</th>
+                            <th>Required</th>
+                            <th>Description</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>user_id</td>
+                            <td>string</td>
+                            <td><span class="required">Yes</span></td>
+                            <td>Saweria User ID</td>
+                        </tr>
+                        <tr>
+                            <td>amount</td>
+                            <td>integer</td>
+                            <td><span class="required">Yes</span></td>
+                            <td>Payment amount (min: 1000)</td>
+                        </tr>
+                        <tr>
+                            <td>name</td>
+                            <td>string</td>
+                            <td><span class="required">Yes</span></td>
+                            <td>Customer name</td>
+                        </tr>
+                        <tr>
+                            <td>email</td>
+                            <td>string</td>
+                            <td><span class="required">Yes</span></td>
+                            <td>Saweria account email</td>
+                        </tr>
+                        <tr>
+                            <td>msg</td>
+                            <td>string</td>
+                            <td>No</td>
+                            <td>Payment message</td>
+                        </tr>
+                    </tbody>
+                </table>
+
+                <h4>Example Request:</h4>
+                <div class="code-block">
+{
+  "user_id": "saweria_user_123",
+  "amount": 25000,
+  "name": "John Doe",
+  "email": "john@example.com",
+  "msg": "Payment for premium access"
+}
+                </div>
+
+                <h4>Response:</h4>
+                <div class="code-block">
+{
+  "status": "success",
+  "code": 200,
+  "data": {
+    "amount": 25000,
+    "amount_to_display": "Rp 25,000",
+    "created_at": "2024-01-20T10:30:00Z",
+    "id": "pay_123456789",
+    "message": "Payment for premium access",
+    "status": "pending",
+    "expired_at": "2024-01-20T11:30:00Z",
+    "receipt": "https://saweria.co/transaction/pay_123456789",
+    "url": "https://saweria.co/payment/pay_123456789",
+    "qr_image": "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAA..."
+  }
+}
+                </div>
+            </div>
+
+            <!-- Check Payment Endpoint -->
+            <div class="endpoint-card">
+                <div class="endpoint-header">
+                    <span class="method get">GET</span>
+                    <span class="endpoint-url">/api/saweria/checkPayment/{payment_id}</span>
+                </div>
+                <p>Check payment status</p>
+
+                <h4>Example Request:</h4>
+                <div class="code-block">
+GET /api/saweria/checkPayment/pay_123456789
+                </div>
+
+                <h4>Response:</h4>
+                <div class="code-block">
+{
+  "status": "success",
+  "data": {
+    "id": "pay_123456789",
+    "amount": 25000,
+    "status": "paid",
+    "paid_at": "2024-01-20T10:35:00Z"
+  }
+}
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Code Examples -->
+    <section class="container">
+        <div class="api-section">
+            <h2 class="section-title">Code Examples</h2>
+            
+            <h3>Python Example:</h3>
+            <div class="code-block">
+import requests
+
+url = "https://rimzohun.vercel.app/api/saweria/createPayment"
+payload = {
+    "user_id": "your_saweria_user_id",
+    "amount": 25000,
+    "name": "Customer Name",
+    "email": "your_email@saweria.com",
+    "msg": "Payment from bot"
+}
+
+response = requests.post(url, json=payload)
+if response.status_code == 200:
+    data = response.json()
+    qr_image = data['data']['qr_image']
+    payment_url = data['data']['url']
+    print("Payment created successfully!")
+else:
+    print("Error:", response.text)
+            </div>
+
+            <h3>cURL Example:</h3>
+            <div class="code-block">
+curl -X POST "https://rimzohun.vercel.app/api/saweria/createPayment" \
+  -H "Content-Type: application/json" \
+  -d '{
+    "user_id": "your_saweria_user_id",
+    "amount": 25000,
+    "name": "Customer Name",
+    "email": "your_email@saweria.com",
+    "msg": "Payment from bot"
+  }'
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer>
+        <div class="container">
+            <div class="logo">
+                <i class="fas fa-store"></i>
+                <span>Warung Rim API</span>
+            </div>
+            <p>Powering your Telegram bot payments with Saweria integration</p>
+            <p>&copy; 2024 Warung Rim. All rights reserved.</p>
+        </div>
+    </footer>
+
+    <script>
+        // Copy code functionality
+        document.querySelectorAll('.code-block').forEach(block => {
+            const button = document.createElement('button');
+            button.className = 'copy-btn';
+            button.innerHTML = '<i class="fas fa-copy"></i> Copy';
+            button.addEventListener('click', () => {
+                const text = block.textContent;
+                navigator.clipboard.writeText(text).then(() => {
+                    button.innerHTML = '<i class="fas fa-check"></i> Copied!';
+                    setTimeout(() => {
+                        button.innerHTML = '<i class="fas fa-copy"></i> Copy';
+                    }, 2000);
+                });
+            });
+            block.parentNode.insertBefore(button, block);
+        });
+
+        // Smooth scroll
+        document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+            anchor.addEventListener('click', function (e) {
+                e.preventDefault();
+                document.querySelector(this.getAttribute('href')).scrollIntoView({
+                    behavior: 'smooth'
+                });
+            });
+        });
+    </script>
+</body>
+</html>
